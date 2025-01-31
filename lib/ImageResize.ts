@@ -1,9 +1,11 @@
 import defaultsDeep from "lodash/defaultsDeep";
+import type Quill from "quill";
+import type { Options, ImageResizeOptions, Modules } from "./types";
 import DefaultOptions from "./DefaultOptions";
 import { DisplaySize } from "./modules/DisplaySize";
 import { Resize } from "./modules/Resize";
 
-const knownModules = { DisplaySize, Resize };
+const knownModules = { DisplaySize: DisplaySize, Resize: Resize };
 
 /**
  * Custom module for quilljs to allow user to resize <img> elements
@@ -11,19 +13,26 @@ const knownModules = { DisplaySize, Resize };
  * @see https://quilljs.com/blog/building-a-custom-module/
  */
 export default class ImageResize {
-  constructor(quill, options = {}) {
+  quill: Quill;
+  options: Options;
+  moduleClasses: Modules;
+  modules: (DisplaySize | Resize)[];
+  img: HTMLImageElement;
+  overlay: HTMLDivElement;
+
+  constructor(quill: Quill, options: ImageResizeOptions = {}) {
     // save the quill reference and options
     this.quill = quill;
 
     // Apply the options to our defaults, and stash them for later
     // defaultsDeep doesn't do arrays as you'd expect, so we'll need to apply the classes array from options separately
-    let moduleClasses = false;
+    let moduleClasses: Modules | false = false;
     if (options.modules) {
       moduleClasses = options.modules.slice();
     }
 
     // Apply options to default options
-    this.options = defaultsDeep({}, options, DefaultOptions);
+    this.options = defaultsDeep({}, options, DefaultOptions) as Options;
 
     // (see above about moduleClasses)
     if (moduleClasses !== false) {
@@ -33,8 +42,9 @@ export default class ImageResize {
     // respond to clicks inside the editor
     this.quill.root.addEventListener("click", this.handleClick, false);
 
-    this.quill.root.parentNode.style.position =
-      this.quill.root.parentNode.style.position || "relative";
+    (this.quill.root.parentNode as HTMLDivElement).style.position =
+      (this.quill.root.parentNode as HTMLDivElement).style.position ||
+      "relative";
 
     // setup modules
     this.moduleClasses = this.options.modules;
@@ -45,9 +55,13 @@ export default class ImageResize {
   initializeModules = () => {
     this.removeModules();
 
-    this.modules = this.moduleClasses.map(
-      (ModuleClass) => new (knownModules[ModuleClass] || ModuleClass)(this),
-    );
+    this.modules = this.moduleClasses.map((ModuleClass) => {
+      if (typeof ModuleClass === "string") {
+        return new knownModules[ModuleClass](this);
+      } else {
+        return new ModuleClass(this);
+      }
+    });
 
     this.modules.forEach((module) => {
       module.onCreate();
@@ -148,11 +162,11 @@ export default class ImageResize {
     // position the overlay over the image
     const parent = this.quill.root.parentNode;
     const imgRect = this.img.getBoundingClientRect();
-    const containerRect = parent.getBoundingClientRect();
+    const containerRect = (parent as HTMLDivElement).getBoundingClientRect();
 
     Object.assign(this.overlay.style, {
-      left: `${imgRect.left - containerRect.left - 1 + parent.scrollLeft}px`,
-      top: `${imgRect.top - containerRect.top + parent.scrollTop}px`,
+      left: `${imgRect.left - containerRect.left - 1 + (parent as HTMLDivElement).scrollLeft}px`,
+      top: `${imgRect.top - containerRect.top + (parent as HTMLDivElement).scrollTop}px`,
       width: `${imgRect.width}px`,
       height: `${imgRect.height}px`,
     });
@@ -174,7 +188,7 @@ export default class ImageResize {
     );
   };
 
-  checkImage = (evt) => {
+  checkImage = () => {
     if (this.img) {
       this.hide();
     }

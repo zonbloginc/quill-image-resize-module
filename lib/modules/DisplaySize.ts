@@ -1,6 +1,8 @@
 import { BaseModule } from "./BaseModule";
 
 export class DisplaySize extends BaseModule {
+  display: HTMLDivElement;
+
   onCreate = () => {
     // Create the container to hold the size display
     this.display = document.createElement("div");

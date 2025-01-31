@@ -1,5 +1,13 @@
+import type ImageResize from "../ImageResize";
+import type { Options } from "../types";
+
 export class BaseModule {
-  constructor(resizer) {
+  overlay: HTMLDivElement;
+  img: HTMLImageElement;
+  options: Options;
+  requestUpdate: () => void;
+
+  constructor(resizer: ImageResize) {
     this.overlay = resizer.overlay;
     this.img = resizer.img;
     this.options = resizer.options;

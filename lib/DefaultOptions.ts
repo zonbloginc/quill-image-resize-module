@@ -1,4 +1,6 @@
-export default {
+import type { Options } from "./types";
+
+const DefaultOptions: Options = {
   modules: ["DisplaySize", "Resize"],
   overlayStyles: {
     position: "absolute",
@@ -27,3 +29,5 @@ export default {
     cursor: "default",
   },
 };
+
+export default DefaultOptions;

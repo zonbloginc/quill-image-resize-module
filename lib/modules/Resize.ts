@@ -1,6 +1,11 @@
 import { BaseModule } from "./BaseModule";
 
 export class Resize extends BaseModule {
+  boxes: HTMLDivElement[];
+  dragBox: HTMLDivElement;
+  dragStartX: number;
+  preDragWidth: number;
+
   onCreate = () => {
     // track resize handles
     this.boxes = [];
@@ -54,9 +59,9 @@ export class Resize extends BaseModule {
     this.boxes.push(box);
   };
 
-  handleMousedown = (evt) => {
+  handleMousedown = (evt: MouseEvent) => {
     // note which box
-    this.dragBox = evt.target;
+    this.dragBox = evt.target as HTMLDivElement;
     // note starting mousedown position
     this.dragStartX = evt.clientX;
     // store the width before the drag
