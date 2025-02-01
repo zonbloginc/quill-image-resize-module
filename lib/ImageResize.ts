@@ -42,6 +42,7 @@ export default class ImageResize {
     }
 
     // respond to image being selected
+    this.quill.root.addEventListener("click", this.handleClick);
     this.quill.on("selection-change", this.handleSelectionChange);
     this.quill.on("text-change", this.handleTextChange);
 
@@ -89,6 +90,16 @@ export default class ImageResize {
     });
 
     this.modules = [];
+  };
+
+  handleClick = (event: MouseEvent) => {
+    // chrome and webkit don't automatically select an image when it's clicked so need to do this manually
+    if (event.target instanceof HTMLImageElement) {
+      const blot = (this.quill.constructor as typeof Quill).find(event.target);
+      if (blot instanceof Parchment.EmbedBlot) {
+        this.quill.setSelection(blot.offset(this.quill.scroll), blot.length());
+      }
+    }
   };
 
   handleSelectionChange = (range: Range | null) => {

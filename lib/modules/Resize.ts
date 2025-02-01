@@ -42,6 +42,7 @@ export class Resize extends BaseModule {
   addBox = (cursor: string) => {
     // create div element for resize handle
     const box = document.createElement("div");
+    box.classList.add(cursor);
 
     // Star with the specified styles
     Object.assign(box.style, this.options.handleStyles);
