@@ -4,7 +4,14 @@ import ImageResize from "../lib/ImageResize";
 
 Quill.register("modules/imageResize", ImageResize);
 
-var quill = new Quill("#editor", {
+let quill = new Quill("#editor", {
+  theme: "snow",
+  modules: {
+    imageResize: {},
+  },
+});
+
+let quill2 = new Quill("#editor2", {
   theme: "snow",
   modules: {
     imageResize: {},

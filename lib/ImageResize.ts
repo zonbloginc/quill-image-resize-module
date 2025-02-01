@@ -1,6 +1,8 @@
 import defaultsDeep from "lodash/defaultsDeep";
 import type Quill from "quill";
+import type { Range } from "quill";
 import type { Options, ImageResizeOptions, Modules } from "./types";
+import { Parchment } from "quill";
 import DefaultOptions from "./DefaultOptions";
 import { DisplaySize } from "./modules/DisplaySize";
 import { Resize } from "./modules/Resize";
@@ -39,8 +41,9 @@ export default class ImageResize {
       this.options.modules = moduleClasses;
     }
 
-    // respond to clicks inside the editor
-    this.quill.root.addEventListener("click", this.handleClick, false);
+    // respond to image being selected
+    this.quill.on("selection-change", this.handleSelectionChange);
+    this.quill.on("text-change", this.handleTextChange);
 
     if (this.quill.root.parentNode instanceof HTMLElement) {
       this.quill.root.parentNode.style.position =
@@ -88,21 +91,35 @@ export default class ImageResize {
     this.modules = [];
   };
 
-  handleClick = (evt: MouseEvent) => {
-    if (evt.target && evt.target instanceof HTMLImageElement) {
-      if (this.img === evt.target) {
-        // we are already focused on this image
-        return;
+  handleSelectionChange = (range: Range | null) => {
+    let firstImage: HTMLImageElement | null = null;
+
+    if (range) {
+      const blots = this.quill.scroll.descendants(
+        Parchment.EmbedBlot,
+        range.index,
+        range.length,
+      );
+      for (const blot of blots) {
+        if (blot.domNode instanceof HTMLImageElement) {
+          firstImage = blot.domNode;
+        }
       }
-      if (this.img) {
-        // we were just focused on another image
-        this.hide();
-      }
-      // clicked on an image inside the editor
-      this.show(evt.target);
+    }
+
+    if (firstImage) {
+      this.show(firstImage);
     } else if (this.img) {
       // clicked on a non image
       this.hide();
+    }
+  };
+
+  handleTextChange = () => {
+    if (this.img) {
+      if (!(this.quill.constructor as typeof Quill).find(this.img)) {
+        this.hide();
+      }
     }
   };
 
@@ -123,10 +140,6 @@ export default class ImageResize {
     // prevent spurious text selection
     this.setUserSelect("none");
 
-    // listen for the image being deleted or moved
-    document.addEventListener("keyup", this.checkImage, true);
-    this.quill.root.addEventListener("input", this.checkImage, true);
-
     // Create and add the overlay
     this.overlay = document.createElement("div");
     Object.assign(this.overlay.style, this.options.overlayStyles);
@@ -145,10 +158,6 @@ export default class ImageResize {
     this.quill.root.parentNode?.removeChild(this.overlay);
     this.overlay = null;
 
-    // stop listening for image deletion or movement
-    document.removeEventListener("keyup", this.checkImage);
-    this.quill.root.removeEventListener("input", this.checkImage);
-
     // reset user-select
     this.setUserSelect("");
   };
@@ -162,6 +171,12 @@ export default class ImageResize {
     if (this.quill.root.parentNode instanceof HTMLElement) {
       const parent = this.quill.root.parentNode;
       const imgRect = this.img.getBoundingClientRect();
+      if (imgRect.width === 0 || imgRect.height === 0) {
+        // Actual image is not in the DOM yet (just image tag)
+        // This occurs after undoing a delete, best to remove overlay
+        this.hide();
+        return;
+      }
       const containerRect = parent.getBoundingClientRect();
 
       Object.assign(this.overlay.style, {
@@ -185,11 +200,5 @@ export default class ImageResize {
     // set on contenteditable element and <html>
     this.quill.root.style.setProperty("user-select", value);
     document.documentElement.style.setProperty("user-select", value);
-  };
-
-  checkImage = () => {
-    if (this.img) {
-      this.hide();
-    }
   };
 }
