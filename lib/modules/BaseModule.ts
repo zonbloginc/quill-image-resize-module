@@ -2,8 +2,8 @@ import type ImageResize from "../ImageResize";
 import type { Options } from "../types";
 
 export class BaseModule {
-  overlay: HTMLDivElement;
-  img: HTMLImageElement;
+  overlay: HTMLDivElement | null;
+  img: HTMLImageElement | null;
   options: Options;
   requestUpdate: () => void;
 

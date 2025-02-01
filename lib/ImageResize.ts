@@ -17,8 +17,8 @@ export default class ImageResize {
   options: Options;
   moduleClasses: Modules;
   modules: (DisplaySize | Resize)[];
-  img: HTMLImageElement;
-  overlay: HTMLDivElement;
+  img: HTMLImageElement | null = null;
+  overlay: HTMLDivElement | null = null;
 
   constructor(quill: Quill, options: ImageResizeOptions = {}) {
     // save the quill reference and options
@@ -42,9 +42,12 @@ export default class ImageResize {
     // respond to clicks inside the editor
     this.quill.root.addEventListener("click", this.handleClick, false);
 
-    (this.quill.root.parentNode as HTMLDivElement).style.position =
-      (this.quill.root.parentNode as HTMLDivElement).style.position ||
-      "relative";
+    if (this.quill.root.parentNode instanceof HTMLElement) {
+      this.quill.root.parentNode.style.position =
+        this.quill.root.parentNode.style.position || "relative";
+    } else {
+      console.warn("parentNode is not an HTMLElement");
+    }
 
     // setup modules
     this.moduleClasses = this.options.modules;
@@ -85,12 +88,8 @@ export default class ImageResize {
     this.modules = [];
   };
 
-  handleClick = (evt) => {
-    if (
-      evt.target &&
-      evt.target.tagName &&
-      evt.target.tagName.toUpperCase() === "IMG"
-    ) {
+  handleClick = (evt: MouseEvent) => {
+    if (evt.target && evt.target instanceof HTMLImageElement) {
       if (this.img === evt.target) {
         // we are already focused on this image
         return;
@@ -107,7 +106,7 @@ export default class ImageResize {
     }
   };
 
-  show = (img) => {
+  show = (img: HTMLImageElement) => {
     // keep track of this img element
     this.img = img;
 
@@ -132,7 +131,7 @@ export default class ImageResize {
     this.overlay = document.createElement("div");
     Object.assign(this.overlay.style, this.options.overlayStyles);
 
-    this.quill.root.parentNode.appendChild(this.overlay);
+    this.quill.root.parentNode?.appendChild(this.overlay);
 
     this.repositionElements();
   };
@@ -143,8 +142,8 @@ export default class ImageResize {
     }
 
     // Remove the overlay
-    this.quill.root.parentNode.removeChild(this.overlay);
-    this.overlay = undefined;
+    this.quill.root.parentNode?.removeChild(this.overlay);
+    this.overlay = null;
 
     // stop listening for image deletion or movement
     document.removeEventListener("keyup", this.checkImage);
@@ -160,32 +159,32 @@ export default class ImageResize {
     }
 
     // position the overlay over the image
-    const parent = this.quill.root.parentNode;
-    const imgRect = this.img.getBoundingClientRect();
-    const containerRect = (parent as HTMLDivElement).getBoundingClientRect();
+    if (this.quill.root.parentNode instanceof HTMLElement) {
+      const parent = this.quill.root.parentNode;
+      const imgRect = this.img.getBoundingClientRect();
+      const containerRect = parent.getBoundingClientRect();
 
-    Object.assign(this.overlay.style, {
-      left: `${imgRect.left - containerRect.left - 1 + (parent as HTMLDivElement).scrollLeft}px`,
-      top: `${imgRect.top - containerRect.top + (parent as HTMLDivElement).scrollTop}px`,
-      width: `${imgRect.width}px`,
-      height: `${imgRect.height}px`,
-    });
+      Object.assign(this.overlay.style, {
+        left: `${imgRect.left - containerRect.left - 1 + parent.scrollLeft}px`,
+        top: `${imgRect.top - containerRect.top + parent.scrollTop}px`,
+        width: `${imgRect.width}px`,
+        height: `${imgRect.height}px`,
+      });
+    } else {
+      console.warn("parentNode is not an HTMLElement");
+    }
   };
 
   hide = () => {
     this.hideOverlay();
     this.removeModules();
-    this.img = undefined;
+    this.img = null;
   };
 
-  setUserSelect = (value) => {
-    ["userSelect", "mozUserSelect", "webkitUserSelect", "msUserSelect"].forEach(
-      (prop) => {
-        // set on contenteditable element and <html>
-        this.quill.root.style[prop] = value;
-        document.documentElement.style[prop] = value;
-      },
-    );
+  setUserSelect = (value: string) => {
+    // set on contenteditable element and <html>
+    this.quill.root.style.setProperty("user-select", value);
+    document.documentElement.style.setProperty("user-select", value);
   };
 
   checkImage = () => {

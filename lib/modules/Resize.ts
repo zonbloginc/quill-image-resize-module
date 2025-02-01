@@ -1,10 +1,10 @@
 import { BaseModule } from "./BaseModule";
 
 export class Resize extends BaseModule {
-  boxes: HTMLDivElement[];
-  dragBox: HTMLDivElement;
-  dragStartX: number;
-  preDragWidth: number;
+  boxes: HTMLElement[] = [];
+  dragBox: HTMLElement | null = null;
+  dragStartX: number = 0;
+  preDragWidth: number = 0;
 
   onCreate = () => {
     // track resize handles
@@ -39,7 +39,7 @@ export class Resize extends BaseModule {
     });
   };
 
-  addBox = (cursor) => {
+  addBox = (cursor: string) => {
     // create div element for resize handle
     const box = document.createElement("div");
 
@@ -54,23 +54,29 @@ export class Resize extends BaseModule {
     // listen for mousedown on each box
     box.addEventListener("mousedown", this.handleMousedown, false);
     // add drag handle to document
-    this.overlay.appendChild(box);
+    this.overlay?.appendChild(box);
     // keep track of drag handle
     this.boxes.push(box);
   };
 
   handleMousedown = (evt: MouseEvent) => {
-    // note which box
-    this.dragBox = evt.target as HTMLDivElement;
-    // note starting mousedown position
-    this.dragStartX = evt.clientX;
-    // store the width before the drag
-    this.preDragWidth = this.img.width || this.img.naturalWidth;
-    // set the proper cursor everywhere
-    this.setCursor(this.dragBox.style.cursor);
-    // listen for movement and mouseup
-    document.addEventListener("mousemove", this.handleDrag, false);
-    document.addEventListener("mouseup", this.handleMouseup, false);
+    if (evt.target instanceof HTMLElement) {
+      // note which box
+      this.dragBox = evt.target;
+      // note starting mousedown position
+      this.dragStartX = evt.clientX;
+      // store the width before the drag
+      if (this.img) {
+        this.preDragWidth = this.img.width || this.img.naturalWidth;
+      }
+      // set the proper cursor everywhere
+      this.setCursor(this.dragBox.style.cursor);
+      // listen for movement and mouseup
+      document.addEventListener("mousemove", this.handleDrag, false);
+      document.addEventListener("mouseup", this.handleMouseup, false);
+    } else {
+      console.warn("mousedown target is not an HTMLElement");
+    }
   };
 
   handleMouseup = () => {
@@ -81,7 +87,7 @@ export class Resize extends BaseModule {
     document.removeEventListener("mouseup", this.handleMouseup);
   };
 
-  handleDrag = (evt) => {
+  handleDrag = (evt: MouseEvent) => {
     if (!this.img) {
       // image not set yet
       return;
@@ -98,9 +104,11 @@ export class Resize extends BaseModule {
     this.requestUpdate();
   };
 
-  setCursor = (value) => {
+  setCursor = (value: string) => {
     [document.body, this.img].forEach((el) => {
-      el.style.cursor = value; // eslint-disable-line no-param-reassign
+      if (el) {
+        el.style.cursor = value; // eslint-disable-line no-param-reassign
+      }
     });
   };
 }

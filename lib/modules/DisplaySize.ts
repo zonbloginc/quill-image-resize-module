@@ -1,7 +1,7 @@
 import { BaseModule } from "./BaseModule";
 
 export class DisplaySize extends BaseModule {
-  display: HTMLDivElement;
+  display: HTMLDivElement | null = null;
 
   onCreate = () => {
     // Create the container to hold the size display
@@ -11,7 +11,7 @@ export class DisplaySize extends BaseModule {
     Object.assign(this.display.style, this.options.displayStyles);
 
     // Attach it
-    this.overlay.appendChild(this.display);
+    this.overlay?.appendChild(this.display);
   };
 
   onDestroy = () => {};
@@ -49,10 +49,16 @@ export class DisplaySize extends BaseModule {
     }
   };
 
-  getCurrentSize = () => [
-    this.img.width,
-    Math.round(
-      (this.img.width / this.img.naturalWidth) * this.img.naturalHeight,
-    ),
-  ];
+  getCurrentSize = () => {
+    if (this.img) {
+      return [
+        this.img.width,
+        Math.round(
+          (this.img.width / this.img.naturalWidth) * this.img.naturalHeight,
+        ),
+      ];
+    } else {
+      return [0, 0];
+    }
+  };
 }
