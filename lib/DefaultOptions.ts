@@ -2,6 +2,8 @@ import type { Options } from "./types";
 
 const DefaultOptions: Options = {
   modules: ["DisplaySize", "Resize"],
+  minWidth: 13,
+  keyboardSizeDelta: 10,
   overlayStyles: {
     position: "absolute",
     boxSizing: "border-box",

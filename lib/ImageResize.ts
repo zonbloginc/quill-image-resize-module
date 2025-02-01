@@ -140,6 +140,8 @@ export default class ImageResize {
     // prevent spurious text selection
     this.setUserSelect("none");
 
+    this.quill.root.addEventListener("keydown", this.handleKeyboardShortcuts);
+
     // Create and add the overlay
     this.overlay = document.createElement("div");
     Object.assign(this.overlay.style, this.options.overlayStyles);
@@ -160,6 +162,11 @@ export default class ImageResize {
 
     // reset user-select
     this.setUserSelect("");
+
+    this.quill.root.removeEventListener(
+      "keydown",
+      this.handleKeyboardShortcuts,
+    );
   };
 
   repositionElements = () => {
@@ -200,5 +207,36 @@ export default class ImageResize {
     // set on contenteditable element and <html>
     this.quill.root.style.setProperty("user-select", value);
     document.documentElement.style.setProperty("user-select", value);
+  };
+
+  handleKeyboardShortcuts = (event: KeyboardEvent) => {
+    if (event.defaultPrevented) {
+      return;
+    }
+
+    switch (event.key) {
+      case "+":
+        if (this.img) {
+          this.img.width = Math.max(
+            this.img.width + this.options.keyboardSizeDelta,
+            this.options.minWidth,
+          );
+          this.onUpdate();
+        }
+        break;
+      case "-":
+        if (this.img) {
+          this.img.width = Math.max(
+            this.img.width - this.options.keyboardSizeDelta,
+            this.options.minWidth,
+          );
+          this.onUpdate();
+        }
+        break;
+      default:
+        return;
+    }
+
+    event.preventDefault();
   };
 }

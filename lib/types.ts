@@ -10,6 +10,8 @@ export type Modules = (
 
 export type Options = {
   modules: Modules;
+  minWidth: number;
+  keyboardSizeDelta: number;
   overlayStyles: {
     position: string;
     boxSizing: string;
@@ -40,6 +42,8 @@ export type Options = {
 
 export type ImageResizeOptions = {
   modules?: Modules;
+  minWidth?: number;
+  keyboardSizeDelta?: number;
   overlayStyles?: {
     position?: string;
     boxSizing?: string;
