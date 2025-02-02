@@ -20,6 +20,10 @@ export class Resize extends BaseModule {
   };
 
   onDestroy = () => {
+    for (const box of this.boxes) {
+      box.removeEventListener("mousedown", this.handleMousedown, false);
+    }
+
     // reset drag handle cursors
     this.setCursor("");
   };
@@ -84,8 +88,8 @@ export class Resize extends BaseModule {
     // reset cursor everywhere
     this.setCursor("");
     // stop listening for movement and mouseup
-    document.removeEventListener("mousemove", this.handleDrag);
-    document.removeEventListener("mouseup", this.handleMouseup);
+    document.removeEventListener("mousemove", this.handleDrag, false);
+    document.removeEventListener("mouseup", this.handleMouseup, false);
   };
 
   handleDrag = (evt: MouseEvent) => {
