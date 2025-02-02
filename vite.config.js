@@ -18,10 +18,11 @@ export default defineConfig({
           noForceEmit: true,
         }),
       ],
-      external: [],
+      external: ["quill"],
       output: {
-        globals: {},
+        globals: { quill: "Quill" },
       },
     },
+    minify: false,
   },
 });

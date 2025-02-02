@@ -1,6 +1,15 @@
 import "quill/dist/quill.snow.css";
 import Quill from "quill";
-import ImageResize from "../lib/ImageResize";
+import ProdImageResize from "../dist/quill-image-resize-module";
+import DevImageResize from "../lib/ImageResize";
+
+let ImageResize;
+
+if (location.hostname === "127.0.0.1") {
+  ImageResize = ProdImageResize;
+} else {
+  ImageResize = DevImageResize;
+}
 
 Quill.register("modules/imageResize", ImageResize);
 

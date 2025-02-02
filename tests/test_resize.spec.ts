@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test("resize using mouse drag", async ({ page, browserName }) => {
-  await page.goto("http://localhost:5173/");
+  await page.goto("http://127.0.0.1:5173/");
 
   await page.locator("img").first().click();
 
@@ -25,7 +25,7 @@ test("resize using mouse drag", async ({ page, browserName }) => {
 });
 
 test("resize using keyboard shortcuts", async ({ page, browserName }) => {
-  await page.goto("http://localhost:5173/");
+  await page.goto("http://127.0.0.1:5173/");
 
   await page.locator("img").first().click();
 

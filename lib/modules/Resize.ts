@@ -58,7 +58,9 @@ export class Resize extends BaseModule {
 
     // listen for mousedown on each box
     box.addEventListener("mousedown", this.handleMousedown, false);
-    box.addEventListener("touchstart", this.handleMousedown, {passive: false})
+    box.addEventListener("touchstart", this.handleMousedown, {
+      passive: false,
+    });
     // add drag handle to document
     this.overlay?.appendChild(box);
     // keep track of drag handle
@@ -83,11 +85,12 @@ export class Resize extends BaseModule {
       this.setCursor(this.dragBox.style.cursor);
       // listen for movement and mouseup
       document.addEventListener("mousemove", this.handleDrag);
-      document.addEventListener("touchmove", this.handleDrag, {passive: false});
+      document.addEventListener("touchmove", this.handleDrag, {
+        passive: false,
+      });
       document.addEventListener("mouseup", this.handleMouseup, true);
       document.addEventListener("touchend", this.handleMouseup, true);
       document.addEventListener("touchcancel", this.handleMouseup, true);
-
     } else {
       console.warn("mousedown target is not an HTMLElement");
     }
