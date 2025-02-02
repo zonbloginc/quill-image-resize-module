@@ -244,6 +244,9 @@ export default class ImageResize {
           this.onUpdate();
         }
         break;
+      case "Escape":
+        this.quill.setSelection(null);
+        break;
       default:
         return;
     }
