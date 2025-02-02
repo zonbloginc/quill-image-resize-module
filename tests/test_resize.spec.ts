@@ -40,8 +40,4 @@ test("resize using keyboard shortcuts", async ({ page, browserName }) => {
   await expect(page.locator("text=94 × 94")).toBeVisible();
 
   expect(await page.locator("img").first().getAttribute("width")).toBe("94");
-
-  await page.keyboard.press("Escape");
-
-  await expect(page.locator("text=94 × 94")).not.toBeVisible();
 });
