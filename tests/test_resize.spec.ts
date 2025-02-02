@@ -19,10 +19,6 @@ test("resize using mouse drag", async ({ page, browserName }) => {
   await page.mouse.move(mouseX + 30, mouseY);
   await page.mouse.up();
 
-  if (browserName === "webkit") {
-    await page.locator("img").first().click();
-  }
-
   await expect(page.locator("text=94 × 94")).toBeVisible();
 
   expect(await page.locator("img").first().getAttribute("width")).toBe("94");
