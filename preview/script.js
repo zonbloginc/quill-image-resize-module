@@ -1,10 +1,10 @@
 import "quill/dist/quill.snow.css";
 import Quill from "quill";
-import ImageResize from "../lib/ImageResize";
+import ImageResize from "../dist/quill-image-resize-module";
 
 Quill.register("modules/imageResize", ImageResize);
 
-console.log("Using dev environment");
+console.log("Using production environment");
 
 let quill = new Quill("#editor", {
   theme: "snow",

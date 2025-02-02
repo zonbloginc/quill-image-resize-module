@@ -5,10 +5,12 @@
   "description": "A module for Quill rich text editor to allow images to be resized.",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --port 5173",
     "build": "vite build",
     "test": "playwright test",
-    "lint": "prettier --write ."
+    "lint": "prettier --write .",
+    "build-preview": "vite build --config vite.preview.config.js",
+    "preview": "vite preview --port 5173 --config vite.preview.config.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.1",
