@@ -46,13 +46,6 @@ export default class ImageResize {
     this.quill.on("selection-change", this.handleSelectionChange);
     this.quill.on("text-change", this.handleTextChange);
 
-    if (this.quill.root.parentNode instanceof HTMLElement) {
-      this.quill.root.parentNode.style.position =
-        this.quill.root.parentNode.style.position || "relative";
-    } else {
-      console.warn("parentNode is not an HTMLElement");
-    }
-
     // setup modules
     this.moduleClasses = this.options.modules;
 
