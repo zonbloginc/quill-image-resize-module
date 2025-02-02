@@ -3,13 +3,14 @@
 A module for Quill rich text editor to allow images to be resized.
 
 A fork of [kensnyder/quill-image-resize-module](https://github.com/kensnyder/quill-image-resize-module) with the following changes:
-* Updated to work with Quill 2
-* Modernized toolchain using vite and TypeScript
-* Toolbar buttons removed since allignment settings were not preserved in the document Delta
-* The presence of resize handles no longer impacts underlying selection range so keyboard actions such as copy to clipboard and type to replace still work as expected
-* Keyboard shortcuts added to increase image size (+ key) and decrease image size (- key)
-* Resize handles now appear when image is selected with the keyboard (using shift with the arrow keys)
-* Works with touch events in addition to mouse events
+
+- Updated to work with Quill 2
+- Modernized toolchain using vite and TypeScript
+- Toolbar buttons removed since allignment settings were not preserved in the document Delta
+- The presence of resize handles no longer impacts underlying selection range so keyboard actions such as copy to clipboard and type to replace still work as expected
+- Keyboard shortcuts added to increase image size (+ key) and decrease image size (- key)
+- Resize handles now appear when image is selected with the keyboard (using shift with the arrow keys)
+- Works with touch events in addition to mouse events
 
 ## Demo
 

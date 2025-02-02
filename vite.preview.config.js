@@ -4,7 +4,7 @@ export default defineConfig({
   root: "./preview",
   build: {
     outDir: "../dist-preview",
-    emptyOutDir: true
+    emptyOutDir: true,
   },
-  base: './'
+  base: "./",
 });
