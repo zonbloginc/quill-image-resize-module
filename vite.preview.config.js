@@ -6,4 +6,5 @@ export default defineConfig({
     outDir: "../dist-preview",
     emptyOutDir: true
   },
+  base: './'
 });
