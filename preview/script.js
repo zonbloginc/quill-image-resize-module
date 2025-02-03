@@ -1,6 +1,6 @@
 import "quill/dist/quill.snow.css";
 import Quill from "quill";
-import ImageResize from "../dist/quill-image-resize-module";
+import ImageResize from "../dist/index.es";
 
 Quill.register("modules/imageResize", ImageResize);
 

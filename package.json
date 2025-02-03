@@ -1,9 +1,11 @@
 {
   "name": "@mgreminger/quill-image-resize-module",
   "private": false,
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "A module for Quill rich text editor to allow images to be resized.",
   "type": "module",
+  "main": "dist/index.es.js",
+  "types": "dist/ImageResize.d.ts",
   "scripts": {
     "dev": "vite --port 5173",
     "build": "vite build",
@@ -31,5 +33,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/mgreminger/quill-image-resize-module"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
