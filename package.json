@@ -6,6 +6,7 @@
   "type": "module",
   "main": "dist/index.es.js",
   "types": "dist/ImageResize.d.ts",
+  "license": "MIT",
   "scripts": {
     "dev": "vite --port 5173",
     "build": "vite build",

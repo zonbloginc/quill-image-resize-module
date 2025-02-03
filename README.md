@@ -5,52 +5,40 @@ A module for Quill rich text editor to allow images to be resized.
 A fork of [kensnyder/quill-image-resize-module](https://github.com/kensnyder/quill-image-resize-module) with the following changes:
 
 - Updated to work with Quill 2
-- Modernized toolchain using vite and TypeScript
-- Toolbar buttons removed since allignment settings were not preserved in the document Delta
-- The presence of resize handles no longer impacts underlying selection range so keyboard actions such as copy to clipboard and type to replace still work as expected
+- Toolbar removed since alignment settings were not preserved in the Quill Delta data structure
+- The presence of resize handles no longer impacts the underlying selection range so keyboard actions such as copy to clipboard and type to replace still work as expected
 - Keyboard shortcuts added to increase image size (+ key) and decrease image size (- key)
 - Resize handles now appear when image is selected with the keyboard (using shift with the arrow keys)
 - Works with touch events in addition to mouse events
+- Add `minWidth` and `keyboardSizeDelta` options for min image width and keyboard + and - size increment (both in pixels)
+- Modernized toolchain using vite and TypeScript
+- Add Playwright tests
 
 ## Demo
 
 [Preview Site](https://mgreminger.github.io/quill-image-resize-module/)
 
+## Installation
+
+```console
+npm install --save-dev @mgreminger/quill-image-resize-module
+```
+
 ## Usage
 
-### Webpack/ES6
+### Importing and Registering the Module
 
 ```javascript
 import Quill from "quill";
-import { ImageResize } from "quill-image-resize-module";
+import ImageResize from "@mgreminger/quill-image-resize-module";;
 
 Quill.register("modules/imageResize", ImageResize);
 
-const quill = new Quill(editor, {
+const quill = new Quill(editorDiv, {
   // ...
   modules: {
     // ...
     imageResize: {
-      // See optional "config" below
-    },
-  },
-});
-```
-
-### Script Tag
-
-Copy image-resize.min.js into your web root or include from node_modules
-
-```html
-<script src="/node_modules/quill-image-resize-module/image-resize.min.js"></script>
-```
-
-```javascript
-var quill = new Quill(editor, {
-  // ...
-  modules: {
-    // ...
-    ImageResize: {
       // See optional "config" below
     },
   },
@@ -62,26 +50,32 @@ var quill = new Quill(editor, {
 For the default experience, pass an empty object, like so:
 
 ```javascript
-var quill = new Quill(editor, {
+var quill = new Quill(editorDiv, {
   // ...
   modules: {
     // ...
-    ImageResize: {},
+    imageResize: {},
   },
 });
 ```
 
 Functionality is broken down into modules, which can be mixed and matched as you like. For example,
-the default is to include all modules:
+this config includes all of the modules (this is the default) and uses the default values for `minWidth` and `keyboardSizeDelta`:
 
 ```javascript
-const quill = new Quill(editor, {
+import { type ImageResizeOptions } from "@mgreminger/quill-image-resize-module/dist/types";
+
+const options: ImageResizeOptions = {
+  modules: ["Resize", "DisplaySize"],
+  minWidth: 13,
+  keyboardSizeDelta: 10
+};
+
+const quill = new Quill(editorDiv, {
   // ...
   modules: {
     // ...
-    ImageResize: {
-      modules: ["Resize", "DisplaySize"],
-    },
+    imageResize: options,
   },
 });
 ```
@@ -95,11 +89,11 @@ Adds handles to the image's corners which can be dragged with the mouse to resiz
 The look and feel can be controlled with options:
 
 ```javascript
-var quill = new Quill(editor, {
+var quill = new Quill(editorDiv, {
   // ...
   modules: {
     // ...
-    ImageResize: {
+    imageResize: {
       // ...
       handleStyles: {
         backgroundColor: "black",
@@ -119,11 +113,11 @@ Shows the size of the image in pixels near the bottom right of the image.
 The look and feel can be controlled with options:
 
 ```javascript
-var quill = new Quill(editor, {
+var quill = new Quill(editorDiv, {
   // ...
   modules: {
     // ...
-    ImageResize: {
+    imageResize: {
       // ...
       displayStyles: {
         backgroundColor: "black",
@@ -147,15 +141,15 @@ For example,
 import { Resize, BaseModule } from "quill-image-resize-module";
 
 class MyModule extends BaseModule {
-  // See src/modules/BaseModule.js for documentation on the various lifecycle callbacks
+  // See lib/modules/BaseModule.js for documentation on the various lifecycle callbacks
 }
 
-var quill = new Quill(editor, {
+var quill = new Quill(editorDiv, {
   // ...
   modules: {
     // ...
-    ImageResize: {
-      modules: [MyModule, Resize],
+    imageResize: {
+      modules: [MyModule, Resize, DisplaySize],
       // ...
     },
   },
