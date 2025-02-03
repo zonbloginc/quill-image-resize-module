@@ -80,7 +80,7 @@ const quill = new Quill(editorDiv, {
 });
 ```
 
-Each module is described below.
+The default configuration options can be seen in this [source file](https://github.com/mgreminger/quill-image-resize-module/blob/master/lib/DefaultOptions.ts). Each module is described below.
 
 #### `Resize` - Resize the image
 
