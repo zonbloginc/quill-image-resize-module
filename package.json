@@ -1,5 +1,5 @@
 {
-  "name": "@mgreminger/quill-image-resize-module",
+  "name": "@zonbloginc/quill-image-resize-module",
   "private": false,
   "version": "1.0.5",
   "description": "A module for Quill rich text editor to allow images to be resized.",
